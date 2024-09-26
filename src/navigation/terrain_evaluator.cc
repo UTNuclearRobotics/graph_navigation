@@ -1,3 +1,24 @@
+/**
+ * @file terrain_evaluator.cc
+ * @brief Implementation of the TerrainEvaluator class for evaluating terrain costs in path planning.
+ *
+ * This file contains the implementation of the TerrainEvaluator class, which is responsible for
+ * evaluating terrain costs for different paths in a bird's-eye-view (BEV) image. The class uses
+ * a neural network model to generate scalar cost images and selects the best path based on various
+ * factors such as distance to goal, clearance, progress, and terrain cost.
+ *
+ * The TerrainEvaluator class relies on several configuration parameters defined using the CONFIG_* macros.
+ * These parameters include patch size, pixels per meter, cost thresholds, discount factor, rollout density,
+ * and weights for different cost factors.
+ *
+ * The main functionalities provided by this class include:
+ * - Loading a neural network model for terrain cost evaluation.
+ * - Finding the best path based on calculated costs.
+ * - Generating scalar cost images using the neural network model.
+ * - Converting scalar cost images to RGB images for visualization.
+ * - Drawing path costs on the visualization image.
+ */
+
 #include "terrain_evaluator.h"
 
 #include <config_reader/config_reader.h>
@@ -15,6 +36,7 @@ namespace motion_primitives
 
   // A config reader must be initialized either in each program's main function or
   // elsewhere by the caller.
+  // Config reader used in spot autonomy: https://github.com/ut-amrl/config-reader/tree/353b55d98a1cb895b4c8677a50594081aa72a87c 
   CONFIG_INT(patch_size_pixels, "TerrainEvaluator.patch_size_pixels");
   CONFIG_INT(bev_pixels_per_meter, "TerrainEvaluator.bev_pixels_per_meter");
   CONFIG_FLOAT(min_cost, "TerrainEvaluator.min_cost");
