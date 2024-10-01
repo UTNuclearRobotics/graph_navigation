@@ -90,6 +90,25 @@ namespace motion_primitives
     }
   }
 
+  /**
+   * @brief Finds the best path from a list of candidate paths based on various evaluation criteria.
+   *
+   * This function evaluates a set of candidate paths and selects the best one based on: 
+   * terrain cost, distance to the goal, and clearance. The evaluation process involves generating
+   * a cost image, calculating terrain costs for each path, and considering the progress and clearance of each path.
+   *
+   * @param paths A vector of shared pointers to PathRolloutBase objects representing the candidate paths.
+   * @return A shared pointer to the best PathRolloutBase object based on the evaluation criteria.
+   *
+   * The function performs the following steps:
+   * 1. Checks if the latest bird's-eye view (BEV) image is initialized.
+   * 2. Generates a scalar cost image using a neural network model or the first channel of the BEV image.
+   * 3. Converts the scalar cost image to an RGB image for visualization.
+   * 4. Calculates the clearance and distance to the goal for each path's endpoint.
+   * 5. Calculates terrain costs for each path by evaluating intermediate states along the path.
+   * 6. Finds the best path based on the calculated costs, considering various weights and factors.
+   * 7. Draws the path costs on the visualization image.
+   */
   std::shared_ptr<PathRolloutBase> TerrainEvaluator::FindBest(
       const std::vector<std::shared_ptr<PathRolloutBase>> &paths)
   {
@@ -252,6 +271,17 @@ namespace motion_primitives
   }
 }
 
+/**
+ * @brief Computes a scalar cost image from a birds-eye-view (BEV) image.
+ *
+ * This function processes the input BEV image by dividing it into patches, 
+ * converting each patch to a tensor, and performing inference using a pre-trained 
+ * cost model to compute a scalar cost for each patch. The resulting costs are 
+ * assembled into a single cost image.
+ *
+ * @param bev_image The input birds-eye-view image as a cv::Mat3b (3-channel 8-bit image).
+ * @return A cv::Mat1f (single-channel 32-bit float image) representing the scalar cost image.
+ */
 cv::Mat1f TerrainEvaluator::GetScalarCostImage(const cv::Mat3b &bev_image)
 {
   std::vector<torch::Tensor> bev_patch_tensors;
